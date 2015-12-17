@@ -21,8 +21,6 @@
 #include <string>
 #include <msgpack.hpp>
 
-
-
 #include "../common/unordered_map.hpp"
 
 namespace jubatus {

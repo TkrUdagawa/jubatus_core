@@ -25,7 +25,7 @@ namespace core {
 namespace bandit {
 
 summation_storage::summation_storage(bool assume_unrewarded)
-  : assume_unrewarded_(assume_unrewarded) {
+    : assume_unrewarded_(assume_unrewarded) {
 }
 
 bool summation_storage::register_arm(const std::string& arm_id) {
@@ -55,23 +55,6 @@ void delete_arm_(summation_storage::table_t& t, const std::string& arm_id) {
   }
 }
 
-counted_arm_info_map& get_counted_arm_info_map_(
-    summation_storage::table_t& t,
-    const std::vector<std::string>& arm_ids,
-    const std::string& player_id) {
-  summation_storage::table_t::iterator iter = t.find(player_id);
-  if (iter != t.end()) {
-    return iter->second;
-  }
-  counted_arm_info_map& ca = t[player_id];
-  arm_info_map& as = ca.second;
-  const arm_info a0 = {0, 0.0};
-  for (size_t i = 0; i < arm_ids.size(); ++i) {
-    as.insert(std::make_pair(arm_ids[i], a0));
-  }
-  ca.first = 0;
-  return ca;
-}
 arm_info_map& get_arm_info_map_(
     summation_storage::table_t& t,
     const std::vector<std::string>& arm_ids,
@@ -90,19 +73,6 @@ arm_info_map& get_arm_info_map_(
 }
 
 arm_info& get_arm_info_(
-    arm_info_map& as,
-    const std::string& player_id,
-    const std::string& arm_id) {
-  arm_info_map::iterator iter = as.find(arm_id);
-  if (iter == as.end()) {
-    throw JUBATUS_EXCEPTION(common::exception::runtime_error(
-        "arm_id is not registered: " + arm_id));
-  }
-  return iter->second;
-}
-
-
-arm_info& get_arm_info_(
     summation_storage::table_t& t,
     const std::vector<std::string>& arm_ids,
     const std::string& player_id,
@@ -114,6 +84,36 @@ arm_info& get_arm_info_(
         "arm_id is not registered: " + arm_id));
   }
   return iter->second;
+}
+
+arm_info& get_arm_info_(
+    arm_info_map& as,
+    const std::string& player_id,
+    const std::string& arm_id) {
+  arm_info_map::iterator iter = as.find(arm_id);
+  if (iter == as.end()) {
+    throw JUBATUS_EXCEPTION(common::exception::runtime_error(
+        "arm_id is not registered: " + arm_id));
+  }
+  return iter->second;
+}
+
+counted_arm_info_map& get_counted_arm_info_map_(
+    summation_storage::table_t& t,
+    const std::vector<std::string>& arm_ids,
+    const std::string& player_id) {
+  summation_storage::table_t::iterator iter = t.find(player_id);
+  if (iter != t.end()) {
+    return iter->second;
+  }
+  counted_arm_info_map& ca = t[player_id];
+  arm_info_map& as = ca.second;
+  const arm_info a0 = {0, 0.0};
+  for (size_t i = 0; i < arm_ids.size(); ++i) {
+    as.insert(std::make_pair(arm_ids[i], a0));
+  }
+  ca.first = 0;
+  return ca;
 }
 }  // namespace
 

@@ -35,6 +35,7 @@ namespace storage {
 class version;
 }  // namespace storage
 namespace bandit {
+
 class bandit_base {
  public:
   bandit_base() {
@@ -60,8 +61,10 @@ class bandit_base {
 
   virtual void pack(framework::packer& pk) const = 0;
   virtual void unpack(msgpack::object o) = 0;
+
   typedef jubatus::util::data::unordered_map<std::string,
     counted_arm_info_map> diff_t;
+
   virtual void get_diff(diff_t& diff) const = 0;
   virtual bool put_diff(const diff_t& diff) = 0;
   virtual void mix(const diff_t& lhs, diff_t& rhs) const = 0;
