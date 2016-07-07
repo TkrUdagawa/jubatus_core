@@ -391,6 +391,10 @@ void inverted_index_storage::calc_euclid_scores(
 
   float squared_query_norm = calc_squared_l2norm(query);
   for (size_t i = 0; i < i_scores.size(); ++i) {
+    float score = i_scores[i];
+    if (score == 0.f)
+      continue;
+
     float squared_norm = calc_column_squared_l2norm(i);
 
     if (squared_norm == 0.f) {
