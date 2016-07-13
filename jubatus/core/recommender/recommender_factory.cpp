@@ -48,6 +48,20 @@ struct inverted_index_config {
   }
 };
 
+struct inverted_index_euclid_config {
+  jubatus::util::data::optional<bool> ignore_unmatch_keys;
+  jubatus::util::data::optional<std::string> unlearner;
+  jubatus::util::data::optional<config> unlearner_parameter;
+
+  template<typename Ar>
+  void serialize(Ar& ar) {
+    ar & JUBA_MEMBER(ignore_unmatch_keys) 
+      & JUBA_MEMBER(unlearner) 
+      & JUBA_MEMBER(unlearner_parameter);
+  }
+};
+
+
 const std::string NEAREST_NEIGHBOR_PREFIX("nearest_neighbor_recommender:");
 struct nearest_neighbor_recommender_config {
   std::string method;

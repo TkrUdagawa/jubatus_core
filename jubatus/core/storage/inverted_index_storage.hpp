@@ -22,6 +22,7 @@
 #include <vector>
 #include <msgpack.hpp>
 #include "jubatus/util/data/unordered_map.h"
+#include "jubatus/util/data/unordered_set.h"
 #include "jubatus/util/lang/function.h"
 #include "jubatus/util/lang/bind.h"
 #include "storage_type.hpp"
@@ -103,13 +104,15 @@ class inverted_index_storage {
   void add_inp_scores(
       const std::string& row,
       float val,
-      std::vector<float>& scores) const;
+      std::vector<float>& scores,
+      jubatus::util::data::unordered_set<int>& score_index_set) const;
 
   tbl_t inv_;
   tbl_t inv_diff_;
   imap_float_t column2norm_;
   imap_float_t column2norm_diff_;
   common::key_manager column2id_;
+  bool ignore_unmatch_keys;
   util::lang::shared_ptr<unlearner::unlearner_base> unlearner_;
 };
 

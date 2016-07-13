@@ -25,6 +25,7 @@
 
 #include "../storage/fixed_size_heap.hpp"
 #include "jubatus/util/data/unordered_map.h"
+#include "jubatus/util/data/unordered_set.h"
 
 using std::istringstream;
 using std::make_pair;
@@ -35,6 +36,7 @@ using std::sqrt;
 using std::string;
 using std::vector;
 using jubatus::util::data::unordered_map;
+using jubatus::util::data::unordered_set;
 
 namespace jubatus {
 namespace core {
@@ -332,6 +334,7 @@ void inverted_index_storage::calc_scores(
     vector<pair<string, float> >& scores,
     size_t ret_num) const {
   float query_squared_norm = calc_squared_l2norm(query);
+  unordered_set<int> i_score_index_set;
   if (query_squared_norm == 0.f) {
     return;
   }
@@ -340,16 +343,18 @@ void inverted_index_storage::calc_scores(
   for (size_t i = 0; i < query.size(); ++i) {
     const string& fid = query[i].first;
     float val = query[i].second;
-    add_inp_scores(fid, val, i_scores);
+    add_inp_scores(fid, val, i_scores, i_score_index_set);
   }
 
   storage::fixed_size_heap<pair<float, uint64_t>,
                            std::greater<pair<float, uint64_t> > > heap(ret_num);
-  for (size_t i = 0; i < i_scores.size(); ++i) {
-    float score = i_scores[i];
+  for (unordered_set<int>::const_iterator it = i_score_index_set.begin(); 
+       it != i_score_index_set.end(); 
+       ++it) {
+    float score = i_scores[*(it)];
     if (score == 0.f)
       continue;
-    float squared_norm = calc_column_squared_l2norm(i);
+    float squared_norm = calc_column_squared_l2norm(*(it));
     if (squared_norm == 0.f)
       continue;
     float cosine_similarity = 1.f;
@@ -358,7 +363,7 @@ void inverted_index_storage::calc_scores(
                           / std::sqrt(squared_norm)
                           / std::sqrt(query_squared_norm);
     }
-    heap.push(make_pair(cosine_similarity, i));
+    heap.push(make_pair(cosine_similarity, *(it)));
   }
   vector<pair<float, uint64_t> > sorted_scores;
   heap.get_sorted(sorted_scores);
@@ -380,22 +385,26 @@ void inverted_index_storage::calc_euclid_scores(
     vector<pair<string, float> >& scores,
     size_t ret_num) const {
   std::vector<float> i_scores(column2id_.get_max_id() + 1, 0.0);
+  unordered_set<int> i_score_index_set;
   for (size_t i = 0; i < query.size(); ++i) {
     const string& fid = query[i].first;
     float val = query[i].second;
-    add_inp_scores(fid, val, i_scores);
+    add_inp_scores(fid, val, i_scores, i_score_index_set);
   }
 
   storage::fixed_size_heap<pair<float, uint64_t>,
                            std::greater<pair<float, uint64_t> > > heap(ret_num);
 
   float squared_query_norm = calc_squared_l2norm(query);
-  for (size_t i = 0; i < i_scores.size(); ++i) {
-    float score = i_scores[i];
+
+  for (unordered_set<int>::const_iterator it = i_score_index_set.begin(); 
+       it != i_score_index_set.end(); 
+       ++it) {
+    float score = i_scores[*(it)];
     if (score == 0.f)
       continue;
 
-    float squared_norm = calc_column_squared_l2norm(i);
+    float squared_norm = calc_column_squared_l2norm(*(it));
 
     if (squared_norm == 0.f) {
       // The column is already removed.
@@ -407,8 +416,8 @@ void inverted_index_storage::calc_euclid_scores(
     // expected to be 0) due to the floating point precision problem.
     // This cause `sqrt(d2)` to return NaN, which is not what we want.
     // To avoid this we use `sqrt(max(0, d2))`.
-    float d2 = squared_query_norm + squared_norm - 2 * i_scores[i];
-    heap.push(make_pair(-std::sqrt(std::max(0.f, d2)), i));
+    float d2 = squared_query_norm + squared_norm - 2 * i_scores[*(it)];
+    heap.push(make_pair(-std::sqrt(std::max(0.f, d2)), *(it)));
   }
 
   vector<pair<float, uint64_t> > sorted_scores;
@@ -454,13 +463,15 @@ float inverted_index_storage::calc_column_squared_l2norm(
 void inverted_index_storage::add_inp_scores(
     const std::string& row,
     float val,
-    std::vector<float>& scores) const {
+    std::vector<float>& scores,
+    unordered_set<int>& score_index_set) const {
   tbl_t::const_iterator it_diff = inv_diff_.find(row);
   if (it_diff != inv_diff_.end()) {
     const row_t& row_v = it_diff->second;
     for (row_t::const_iterator row_it = row_v.begin(); row_it != row_v.end();
         ++row_it) {
       scores[row_it->first] += row_it->second * val;
+      score_index_set.insert(row_it->first);
     }
   }
 
@@ -471,6 +482,7 @@ void inverted_index_storage::add_inp_scores(
       for (row_t::const_iterator row_it = row_v.begin(); row_it != row_v.end();
           ++row_it) {
         scores[row_it->first] += row_it->second * val;
+	score_index_set.insert(row_it->first);
       }
     } else {
       const row_t& row_diff_v = it_diff->second;
@@ -478,6 +490,7 @@ void inverted_index_storage::add_inp_scores(
           ++row_it) {
         if (row_diff_v.find(row_it->first) == row_diff_v.end()) {
           scores[row_it->first] += row_it->second * val;
+	  score_index_set.insert(row_it->first);
         }
       }
     }
