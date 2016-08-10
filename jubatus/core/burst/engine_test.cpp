@@ -70,6 +70,23 @@ TEST(engine, simple) {
   EXPECT_LT(6, weights[4]);
 }
 
+TEST(engine, inf) {
+  const int n = 5;
+
+  std::vector<uint32_t> d_vec, r_vec;
+  std::vector<double> weights;
+
+  d_vec.resize(n, 10);
+  r_vec.resize(n, 0);
+  weights.resize(n, -1);
+
+  r_vec[0] = 10;
+  r_vec[4] = 10;
+
+  //EXPECT_THROW(burst_detect(d_vec, r_vec, weights, 3, 1, DBL_MAX), hogehoge_error);
+}
+
+
 TEST(engine, reuse) {
   const int n = 5;
 
