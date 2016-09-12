@@ -14,15 +14,43 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-#ifndef JUBATUS_CORE_REGRESSION_REGRESSION_HPP_
-#define JUBATUS_CORE_REGRESSION_REGRESSION_HPP_
+#ifndef JUBATUS_CORE_REGRESSION_PERCEPTRON_HPP_
+#define JUBATUS_CORE_REGRESSION_PERCEPTRON_HPP_
 
+#include <string>
+#include "jubatus/util/data/serialization.h"
 #include "regression_base.hpp"
-#include "passive_aggressive.hpp"
-#include "perceptron.hpp"
-#include "confidence_weighted.hpp"
-#include "arow.hpp"
-#include "normal_herd.hpp"
 
+namespace jubatus {
+namespace core {
+namespace regression {
 
-#endif  // JUBATUS_CORE_REGRESSION_REGRESSION_HPP_
+class perceptron : public regression_base {
+public:
+  struct config {
+    config()
+      : learning_rate(0.1f) {
+    }
+    float learning_rate;
+
+    template<typename Ar>
+    void serialize(Ar& ar) {
+      ar & JUBA_NAMED_MEMBER("learning_rate", learning_rate);
+    }
+  };
+  
+  perceptron(
+	     const config& config,
+	     storage_ptr storage);
+  explicit perceptron(storage_ptr storage);
+  void train(const common::sfv_t& sfv, const float value);
+  void clear();
+
+private:
+  config config_;
+};
+
+} // namespace regression
+} // namespace core
+} // namespace jubatus
+#endif  // JUBATUS_CORE_REGRESSION_PERCEPTRON_HPP_

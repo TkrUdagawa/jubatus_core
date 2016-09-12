@@ -14,15 +14,42 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-#ifndef JUBATUS_CORE_REGRESSION_REGRESSION_HPP_
-#define JUBATUS_CORE_REGRESSION_REGRESSION_HPP_
-
-#include "regression_base.hpp"
-#include "passive_aggressive.hpp"
 #include "perceptron.hpp"
-#include "confidence_weighted.hpp"
-#include "arow.hpp"
-#include "normal_herd.hpp"
+
+#include <iostream>
+namespace jubatus {
+namespace core {
+namespace regression {
+
+perceptron::perceptron(
+    const config& config,
+    storage_ptr storage)
+  : regression_base(storage),
+    config_(config) {
+  if (!(0.f < config.learning_rate)) {
+    throw JUBATUS_EXCEPTION(
+        common::invalid_parameter("0.0 < learning_rate"));
+  }
+}
 
 
-#endif  // JUBATUS_CORE_REGRESSION_REGRESSION_HPP_
+perceptron::perceptron(
+    storage_ptr storage)
+  : regression_base(storage),
+    config_(config()) {
+}
+
+void perceptron::train(const common::sfv_t& fv, float value) {
+  float predict = estimate(fv);
+  std::cerr << "predict:" << predict << std::endl;
+  float error = value - predict;
+  update(fv, error * 0.01);
+}
+
+void perceptron::clear() {
+  regression_base::clear();
+}
+
+}  // namespace regression
+}  // namespace core
+}  // namespace jubatus

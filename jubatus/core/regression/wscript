@@ -9,7 +9,11 @@ def build(bld):
     source = [
         'regression_base.cpp',
         'passive_aggressive.cpp',
-        'regression_factory.cpp'
+        'regression_factory.cpp',
+        'perceptron.cpp',
+        'confidence_weighted.cpp',
+        'arow.cpp',
+        'normal_herd.cpp'
         ]
     headers = [
           'regression_base.hpp',

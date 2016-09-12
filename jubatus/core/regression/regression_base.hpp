@@ -53,7 +53,7 @@ class regression_base {
 
  protected:
   void update(const common::sfv_t& fv, float coeff);
-
+  float calc_variance(const common::sfv_t& sfv) const;
   storage_ptr storage_;
 };
 
