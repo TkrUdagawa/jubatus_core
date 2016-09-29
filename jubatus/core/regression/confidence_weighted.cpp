@@ -27,7 +27,7 @@ namespace regression {
 confidence_weighted::confidence_weighted(
     const config& config,
     storage_ptr storage)
-    : regression_base(storage),
+    : linear_regression(storage),
       config_(config) {
 
   if (!(0.f < config.regularization_weight)) {
@@ -42,7 +42,7 @@ confidence_weighted::confidence_weighted(
 }
 
 confidence_weighted::confidence_weighted(storage_ptr storage)
-  : regression_base(storage) {
+  : linear_regression(storage) {
 }
 
 void confidence_weighted::train(const common::sfv_t& fv, float value) {
@@ -87,7 +87,7 @@ void confidence_weighted::update(
 
 
 void confidence_weighted::clear() {
-  regression_base::clear();
+  linear_regression::clear();
 }
 
 }  // namespace regression

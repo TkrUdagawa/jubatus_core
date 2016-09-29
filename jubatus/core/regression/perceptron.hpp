@@ -19,13 +19,13 @@
 
 #include <string>
 #include "jubatus/util/data/serialization.h"
-#include "regression_base.hpp"
+#include "linear_regression.hpp"
 
 namespace jubatus {
 namespace core {
 namespace regression {
 
-class perceptron : public regression_base {
+class perceptron : public linear_regression {
 public:
   struct config {
     config()

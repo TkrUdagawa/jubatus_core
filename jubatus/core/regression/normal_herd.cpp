@@ -27,7 +27,7 @@ namespace regression {
 normal_herd::normal_herd(
     const config& config,
     storage_ptr storage)
-    : regression_base(storage),
+    : linear_regression(storage),
       config_(config) {
 
   if (!(0.f < config.regularization_weight)) {
@@ -42,7 +42,7 @@ normal_herd::normal_herd(
 }
 
 normal_herd::normal_herd(storage_ptr storage)
-  : regression_base(storage) {
+  : linear_regression(storage) {
 }
 
 void normal_herd::train(const common::sfv_t& fv, float value) {
@@ -88,7 +88,7 @@ void normal_herd::update(
 
 
 void normal_herd::clear() {
-  regression_base::clear();
+  linear_regression::clear();
 }
 
 }  // namespace regression

@@ -27,7 +27,7 @@ namespace regression {
 passive_aggressive::passive_aggressive(
     const config& config,
     storage_ptr storage)
-    : regression_base(storage),
+    : linear_regression(storage),
       config_(config),
       sum_(0.f),
       sq_sum_(0.f),
@@ -45,7 +45,7 @@ passive_aggressive::passive_aggressive(
 }
 
 passive_aggressive::passive_aggressive(storage_ptr storage)
-    : regression_base(storage),
+    : linear_regression(storage),
       sum_(0.f),
       sq_sum_(0.f),
       count_(0.f) {
@@ -81,7 +81,7 @@ void passive_aggressive::train(const common::sfv_t& fv, float value) {
 }
 
 void passive_aggressive::clear() {
-  regression_base::clear();
+  linear_regression::clear();
   sum_ = 0.f;
   sq_sum_ = 0.f;
   count_ = 0.f;

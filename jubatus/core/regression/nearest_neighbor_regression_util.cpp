@@ -1,5 +1,6 @@
+
 // Jubatus: Online machine learning framework for distributed environment
-// Copyright (C) 2012 Preferred Networks and Nippon Telegraph and Telephone Corporation.
+// Copyright (C) 2016 Preferred Networks and Nippon Telegraph and Telephone Corporation.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -14,42 +15,30 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-#include "perceptron.hpp"
+#include "nearest_neighbor_regression_util.hpp"
+#include <string>
 
-#include <iostream>
 namespace jubatus {
 namespace core {
 namespace regression {
 
-perceptron::perceptron(
-    const config& config,
-    storage_ptr storage)
-  : linear_regression(storage),
-    config_(config) {
-  if (!(0.f < config.learning_rate)) {
-    throw JUBATUS_EXCEPTION(
-        common::invalid_parameter("0.0 < learning_rate"));
+std::string make_id(
+     jubatus::util::math::random::mtrand& rand) {
+  const size_t n = 8;
+  std::string result;
+  result.reserve(1 + n);
+  for (size_t i = 0; i < n; ++i) {
+    int r = rand.next_int(26 * 2 + 10);
+    if (r < 26) {
+      result.push_back('a' + r);
+    } else if (r < 26 * 2) {
+      result.push_back('A' + (r - 26));
+    } else {
+      result.push_back('0' + (r - 26 * 2));
+    }
   }
+  return result;
 }
-
-
-perceptron::perceptron(
-    storage_ptr storage)
-  : linear_regression(storage),
-    config_(config()) {
-}
-
-void perceptron::train(const common::sfv_t& fv, float value) {
-  float predict = estimate(fv);
-  std::cerr << "predict:" << predict << std::endl;
-  float error = value - predict;
-  update(fv, error * 0.01);
-}
-
-void perceptron::clear() {
-  linear_regression::clear();
-}
-
 }  // namespace regression
 }  // namespace core
 }  // namespace jubatus

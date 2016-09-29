@@ -27,7 +27,7 @@ namespace regression {
 arow::arow(
     const config& config,
     storage_ptr storage)
-    : regression_base(storage),
+    : linear_regression(storage),
       config_(config) {
 
   if (!(0.f < config.regularization_weight)) {
@@ -42,7 +42,7 @@ arow::arow(
 }
 
 arow::arow(storage_ptr storage)
-  : regression_base(storage) {
+  : linear_regression(storage) {
 }
 
 void arow::train(const common::sfv_t& fv, float value) {
@@ -84,7 +84,7 @@ void arow::update(
 
 
 void arow::clear() {
-  regression_base::clear();
+  linear_regression::clear();
 }
 
 }  // namespace regression

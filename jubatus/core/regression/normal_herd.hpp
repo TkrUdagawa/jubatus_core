@@ -19,13 +19,13 @@
 
 #include <limits>
 #include "jubatus/util/data/serialization.h"
-#include "regression_base.hpp"
+#include "linear_regression.hpp"
 
 namespace jubatus {
 namespace core {
 namespace regression {
 
-class normal_herd : public regression_base {
+class normal_herd : public linear_regression {
  public:
   struct config {
     config()

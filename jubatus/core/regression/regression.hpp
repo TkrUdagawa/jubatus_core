@@ -23,6 +23,6 @@
 #include "confidence_weighted.hpp"
 #include "arow.hpp"
 #include "normal_herd.hpp"
-
+#include "nearest_neighbor_regression.hpp"
 
 #endif  // JUBATUS_CORE_REGRESSION_REGRESSION_HPP_

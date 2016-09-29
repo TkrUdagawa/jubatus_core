@@ -19,13 +19,13 @@
 
 #include <limits>
 #include "jubatus/util/data/serialization.h"
-#include "regression_base.hpp"
+#include "linear_regression.hpp"
 
 namespace jubatus {
 namespace core {
 namespace regression {
 
-class confidence_weighted : public regression_base {
+class confidence_weighted : public linear_regression {
  public:
   struct config {
     config()
