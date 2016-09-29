@@ -26,7 +26,7 @@ namespace core {
 namespace regression {
 
 class perceptron : public linear_regression {
-public:
+ public:
   struct config {
     config()
       : learning_rate(0.1f) {
@@ -38,19 +38,19 @@ public:
       ar & JUBA_NAMED_MEMBER("learning_rate", learning_rate);
     }
   };
-  
+
   perceptron(
-	     const config& config,
-	     storage_ptr storage);
+      const config& config,
+      storage_ptr storage);
   explicit perceptron(storage_ptr storage);
   void train(const common::sfv_t& sfv, const float value);
   void clear();
 
-private:
+ private:
   config config_;
 };
 
-} // namespace regression
-} // namespace core
-} // namespace jubatus
+}  // namespace regression
+}  // namespace core
+}  // namespace jubatus
 #endif  // JUBATUS_CORE_REGRESSION_PERCEPTRON_HPP_

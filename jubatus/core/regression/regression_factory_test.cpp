@@ -15,6 +15,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <stdexcept>
+#include <string>
 
 #include <gtest/gtest.h>
 #include "jubatus/util/text/json.h"
@@ -45,14 +46,13 @@ TEST(regression_factory, trivial) {
       f.create_regression("PA", param, s);
     EXPECT_EQ(typeid(*r), typeid(regression::passive_aggressive&));
   }
-  
+
   {
     common::jsonconfig::config param(to_json(
       regression::perceptron::config()));
     shared_ptr<regression::regression_base> r =
       f.create_regression("perceptron", param, s);
     EXPECT_EQ(typeid(*r), typeid(regression::perceptron&));
-
   }
 
   {
@@ -61,7 +61,6 @@ TEST(regression_factory, trivial) {
     shared_ptr<regression::regression_base> r =
       f.create_regression("CW", param, s);
     EXPECT_EQ(typeid(*r), typeid(regression::confidence_weighted&));
-
   }
 
   {
@@ -99,7 +98,6 @@ TEST(regression_factory, trivial) {
       f.create_regression("NN", param, s);
     EXPECT_EQ(typeid(*r), typeid(regression::nearest_neighbor_regression&));
   }
-
 }
 
 TEST(regression_factory, unknown) {

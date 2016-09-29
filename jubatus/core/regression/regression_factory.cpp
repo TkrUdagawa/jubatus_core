@@ -63,15 +63,15 @@ shared_ptr<regression_base> regression_factory::create_regression(
       storage));
   } else if (name == "CW" || name == "confidence_weighted") {
     return shared_ptr<regression_base>(new regression::confidence_weighted(
-      config_cast_check<regression::confidence_weighted::config>(param), 
+      config_cast_check<regression::confidence_weighted::config>(param),
       storage));
   } else if (name == "AROW") {
     return shared_ptr<regression_base>(new regression::arow(
-      config_cast_check<regression::arow::config>(param), 
+      config_cast_check<regression::arow::config>(param),
       storage));
   } else if (name == "NHERD" || name == "normal_herd") {
     return shared_ptr<regression_base>(new regression::normal_herd(
-      config_cast_check<regression::normal_herd::config>(param), 
+      config_cast_check<regression::normal_herd::config>(param),
       storage));
   } else if (name == "NN" || name == "nearest_neighbor") {
     if (param.type() == jubatus::util::text::json::json::Null) {
@@ -80,7 +80,8 @@ shared_ptr<regression_base> regression_factory::create_regression(
               "parameter block is not specified in config"));
     }
     regression::nearest_neighbor_regression::config conf
-      = config_cast_check<regression::nearest_neighbor_regression::config>(param);
+      = config_cast_check<regression::nearest_neighbor_regression::config>(
+          param);
     jubatus::util::lang::shared_ptr<unlearner::unlearner_base> unlearner;
     unlearner = create_unlearner(conf);
     shared_ptr<storage::column_table> table(new storage::column_table);
@@ -88,8 +89,8 @@ shared_ptr<regression_base> regression_factory::create_regression(
         nearest_neighbor_engine(nearest_neighbor::create_nearest_neighbor(
             conf.method, conf.parameter, table, ""));
     shared_ptr<regression_base> res(new regression::nearest_neighbor_regression(
-				       nearest_neighbor_engine,
-				       conf.nearest_neighbor_num));
+                                        nearest_neighbor_engine,
+                                        conf.nearest_neighbor_num));
     if (unlearner) {
       res->set_unlearner(unlearner);
     }

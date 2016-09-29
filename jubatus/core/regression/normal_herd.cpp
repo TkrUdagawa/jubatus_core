@@ -18,7 +18,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
+#include <string>
 
 namespace jubatus {
 namespace core {
@@ -46,14 +46,13 @@ normal_herd::normal_herd(storage_ptr storage)
 }
 
 void normal_herd::train(const common::sfv_t& fv, float value) {
-
   float predict = estimate(fv);
   float error = value - predict;
   float sign_error = error > 0.f ? 1.0f : -1.0f;
   float loss = sign_error * error - config_.sensitivity;
-   if (loss > 0.f) {
-     float variance = calc_variance(fv);
-     update(fv, loss, variance, sign_error);
+  if (loss > 0.f) {
+    float variance = calc_variance(fv);
+    update(fv, loss, variance, sign_error);
   }
 }
 
@@ -75,14 +74,14 @@ void normal_herd::update(
     const float C = config_.regularization_weight;
     float val_covariance = val * current_val.v2;
     storage_->set2_nolock(
-			  feature,
-			  "+",
-			  storage::val2_t(current_val.v1 + 
-			     sign_error * loss * val_covariance 
-			         / (variance + 1.f / C),
-			  1.f
-			      / ((1.f / current_val.v2) + (2 * C + C * C * variance)
-			          * val * val)));
+        feature,
+        "+",
+        storage::val2_t(current_val.v1 +
+          sign_error * loss * val_covariance
+          / (variance + 1.f / C),
+        1.f
+          / ((1.f / current_val.v2) + (2 * C + C * C * variance)
+          * val * val)));
   }
 }
 

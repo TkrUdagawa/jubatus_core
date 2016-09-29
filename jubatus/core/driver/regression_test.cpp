@@ -100,14 +100,16 @@ shared_ptr<core::regression::regression_base> make_nn_regression() {
   js["nearest_neighbor_num"] = to_json(5);
   common::jsonconfig::config param(js);
   core::regression::nearest_neighbor_regression::config conf
-    = config_cast_check<core::regression::nearest_neighbor_regression::config>(param);
+    = config_cast_check<core::regression::nearest_neighbor_regression::config>(
+        param);
   shared_ptr<core::storage::column_table> table(new storage::column_table);
   shared_ptr<core::nearest_neighbor::nearest_neighbor_base>
     nearest_neighbor_engine(nearest_neighbor::create_nearest_neighbor(
        conf.method, conf.parameter, table, ""));
-  shared_ptr<core::regression::regression_base> res(new core::regression::nearest_neighbor_regression(
-       nearest_neighbor_engine,
-       conf.nearest_neighbor_num));
+  shared_ptr<core::regression::regression_base> res(
+       new core::regression::nearest_neighbor_regression(
+           nearest_neighbor_engine,
+           conf.nearest_neighbor_num));
   return res;
 }
 
@@ -200,7 +202,7 @@ TEST_F(regression_test, nn) {
   msgpack::unpack(&msg, save_data.data(), save_data.size());
   cout << "load unpack" << endl;
   regression_->unpack(msg.get());
-  
+
   cout << "estimate" << endl;
   float res = regression_->estimate(d);
   cout << res << endl;

@@ -18,6 +18,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 #include "../storage/storage_base.hpp"
 
 using std::string;
@@ -62,7 +63,7 @@ float linear_regression::calc_variance(const common::sfv_t& sfv) const {
       storage_->get2_nolock(feature, weight_covars);
 
       if (weight_covars.size() > 0) {
-	covar = weight_covars[0].second.v2;
+        covar = weight_covars[0].second.v2;
       }
       var +=  covar * val * val;
     }

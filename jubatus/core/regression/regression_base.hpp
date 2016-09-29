@@ -19,6 +19,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 #include "jubatus/util/lang/shared_ptr.h"
 #include "../common/type.hpp"
 #include "../framework/linear_function_mixer.hpp"
@@ -53,9 +54,9 @@ class regression_base {
   virtual void get_status(std::map<std::string, std::string>& status) const = 0;
   virtual void pack(framework::packer& pk) const = 0;
   virtual void unpack(msgpack::object o) = 0;
-  
+
   virtual std::vector<framework::mixable*> get_mixables() = 0;
-  //Currently only nearest neighbor regression uses unlearner.
+  // Currently only nearest neighbor regression uses unlearner.
   virtual void set_unlearner(
       jubatus::util::lang::shared_ptr<unlearner::unlearner_base>
       label_unlearner) {

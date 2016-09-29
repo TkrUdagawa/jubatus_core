@@ -82,7 +82,7 @@ void nearest_neighbor_regression::train(
     shared_ptr<storage::column_table> table =
         nearest_neighbor_engine_->get_table();
     util::concurrent::scoped_wlock lk(table->get_mutex());
-    
+
     if (!unlearner_->touch(id)) {
       throw JUBATUS_EXCEPTION(common::exception::runtime_error(
           "cannot add new ID as number of sticky IDs reached "
@@ -109,10 +109,11 @@ float nearest_neighbor_regression::estimate(
   // lock acquired inside
   nearest_neighbor_engine_->neighbor_row(fv, ids, k_);
   float sum = 0.0;
-  
+
   if (ids.size() > 0) {
-    for (std::vector<std::pair<std::string, float> >::const_iterator it = ids.begin();
-	 it != ids.end(); ++it) {
+    for (std::vector<std::pair<std::string, float> >::const_iterator
+           it = ids.begin();
+         it != ids.end(); ++it) {
       sum += it->second;
     }
     return sum / ids.size();

@@ -40,12 +40,12 @@ namespace jubatus {
 namespace core {
 namespace regression {
 
-class nearest_neighbor_regression : public regression_base{
+class nearest_neighbor_regression : public regression_base {
  public:
-
   struct unlearner_config {
     jubatus::util::data::optional<std::string> unlearner;
-    jubatus::util::data::optional<common::jsonconfig::config> unlearner_parameter;
+    jubatus::util::data::optional<common::jsonconfig::config>
+        unlearner_parameter;
 
     template<typename Ar>
     void serialize(Ar& ar) {
@@ -62,8 +62,8 @@ class nearest_neighbor_regression : public regression_base{
     template<typename Ar>
     void serialize(Ar& ar) {
       ar & JUBA_MEMBER(method)
-	& JUBA_MEMBER(parameter)
-	& JUBA_MEMBER(nearest_neighbor_num);
+        & JUBA_MEMBER(parameter)
+        & JUBA_MEMBER(nearest_neighbor_num);
       unlearner_config::serialize(ar);
     }
   };

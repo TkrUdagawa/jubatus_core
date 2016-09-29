@@ -18,7 +18,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
+#include <string>
 
 namespace jubatus {
 namespace core {
@@ -46,7 +46,6 @@ confidence_weighted::confidence_weighted(storage_ptr storage)
 }
 
 void confidence_weighted::train(const common::sfv_t& fv, float value) {
-
   float predict = estimate(fv);
   float error = value - predict;
   float sign_error = error > 0.f ? 1.0f : -1.0f;
@@ -78,10 +77,11 @@ void confidence_weighted::update(
     const float C = config_.regularization_weight;
     float covar_step = 2 * step_width * val * val * C;
     storage_->set2_nolock(
-			  feature,
-			  "+",
-			  storage::val2_t(current_val.v1 + sign_error * step_width * current_val.v2 * val,
-					  1.f / (1.f / current_val.v2 + covar_step)));
+        feature,
+        "+",
+        storage::val2_t(current_val.v1
+              + sign_error * step_width * current_val.v2 * val,
+            1.f / (1.f / current_val.v2 + covar_step)));
   }
 }
 

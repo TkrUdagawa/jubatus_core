@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <string>
 
 namespace jubatus {
 namespace core {
@@ -46,7 +47,6 @@ arow::arow(storage_ptr storage)
 }
 
 void arow::train(const common::sfv_t& fv, float value) {
-
   float predict = estimate(fv);
   float error = value - predict;
   float sign_error = error > 0.f ? 1.0f : -1.0f;
@@ -75,10 +75,10 @@ void arow::update(
     }
 
     storage_->set2_nolock(
-			  feature,
-			  "+",
-			  storage::val2_t(current_val.v1 + alpha * current_val.v2 * val,
-					  current_val.v2 - beta * current_val.v2 * val * val));
+        feature,
+        "+",
+        storage::val2_t(current_val.v1 + alpha * current_val.v2 * val,
+            current_val.v2 - beta * current_val.v2 * val * val));
   }
 }
 
