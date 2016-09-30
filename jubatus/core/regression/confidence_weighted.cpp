@@ -51,10 +51,12 @@ void confidence_weighted::train(const common::sfv_t& fv, float value) {
   float sign_error = error > 0.f ? 1.0f : -1.0f;
   float loss = sign_error * error - config_.sensitivity;
   float variance = calc_variance(fv);
+  float absolute_error = std::fabs(error);
   if (loss > 0.f) {
     float C = config_.regularization_weight;
-    float b = 1.f + 2 * C * loss;
-    float gamma = -b + std::sqrt(b * b - 8 * C * (loss - C * variance));
+    float b = 1.f - 2 * C * absolute_error;
+    float gamma = -b + std::sqrt(b * b +
+                                 8 * C * (absolute_error + C * variance));
     gamma /= 4 * C * variance;
     update(fv, gamma, sign_error);
   }
