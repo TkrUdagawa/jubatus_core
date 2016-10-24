@@ -25,10 +25,9 @@ namespace jubatus {
 namespace core {
 namespace clustering {
 
-storage::storage(const std::string& name, const clustering_config& config)
+storage::storage(const std::string& name)
     : revision_(0),
-      name_(name),
-      config_(config) {
+      name_(name) {
 }
 
 wplist storage::get_all() const {
@@ -91,6 +90,7 @@ void storage::pack(framework::packer& packer) const {
 }
 
 void storage::unpack(msgpack::object o) {
+  std::cerr << "unpack_impl" << std::endl;
   unpack_impl_(o);
   dispatch(REVISION_CHANGE, get_all());
 }
@@ -114,6 +114,7 @@ void storage::pack_impl_(framework::packer& packer) const {
   packer.pack(*this);
 }
 void storage::unpack_impl_(msgpack::object o) {
+  std::cerr << "unpack_impl_ storage" << std::endl;
   o.convert(this);
 }
 void storage::clear_impl_() {

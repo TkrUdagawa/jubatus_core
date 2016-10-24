@@ -54,9 +54,9 @@ class not_performed : public clustering_error {
 class clustering {
  public:
   clustering(
-      const std::string& name,
-      const std::string& method,
-      const clustering_config& cfg);
+      jubatus::util::lang::shared_ptr<clustering_method> clustering_method,
+      jubatus::util::lang::shared_ptr<storage> storage);
+
   virtual ~clustering();
 
   bool push(const std::vector<weighted_point>& points);

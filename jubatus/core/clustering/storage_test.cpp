@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
+#include <iostream>
 #include <map>
 #include <vector>
 #include <string>
@@ -24,6 +24,11 @@
 #include "storage.hpp"
 #include "storage_factory.hpp"
 #include "testutil.hpp"
+#include "../common/jsonconfig.hpp"
+
+using jubatus::util::text::json::json;
+using jubatus::util::text::json::json_object;
+using jubatus::util::text::json::to_json;
 
 namespace jubatus {
 namespace core {
@@ -56,24 +61,61 @@ class storage_test
   typedef jubatus::util::lang::shared_ptr<storage> storage_ptr;
   std::string name;
   std::string method;
-  clustering_config conf;
+std::string compressor_method;
 
   void SetUp() {
     name = "test";
     std::map<std::string, std::string> param = GetParam();
     method = param["method"];
-    conf.compressor_method = param["compressor_method"];
+    compressor_method = param["compressor_method"];
   }
 };
 
+common::jsonconfig::config make_simple_config() {
+    json js(new json_object);
+    js = new json_object;
+    js["bucket_size"] = to_json(10);
+     common::jsonconfig::config conf(js);
+    return conf;
+}
+
+common::jsonconfig::config make_compressive_config() {
+    json js(new json_object);
+    js = new json_object;
+    js["bucket_size"] = to_json(200);
+    js["bucket_length"] = to_json(2);
+    js["compressed_bucket_size"] = to_json(10);
+    js["bicriteria_base_size"] = to_json(2);
+    js["forgetting_factor"] = to_json(2);
+    js["forgetting_threshold"] = to_json(0.05);
+    js["seed"] = to_json(0);
+    common::jsonconfig::config conf(js);
+    return conf;
+}
+
 TEST_P(storage_test, pack_unpack) {
-  storage_ptr s = storage_factory::create(name, method, conf);
+  common::jsonconfig::config conf;
+  if (compressor_method == "simple") {
+    conf = make_simple_config();
+  } else if (compressor_method == "compressive") {
+    conf = make_compressive_config();
+  } else {
+    throw JUBATUS_EXCEPTION(
+        core::common::unsupported_method(compressor_method));
+  }
+
+  storage_ptr s = storage_factory::create(
+                                          name,
+                                          method,
+                                          compressor_method,
+                                          conf);
   ASSERT_TRUE(s != NULL);
   for (size_t i = 0; i < 10; ++i) {
     s->add(get_point(3));
   }
 
   // pack
+  std::cerr << "pack" << std::endl;
   msgpack::sbuffer buf;
   {
     framework::stream_writer<msgpack::sbuffer> st(buf);
@@ -83,14 +125,23 @@ TEST_P(storage_test, pack_unpack) {
   }
 
   // unpack
-  storage_ptr s2 = storage_factory::create(name, method, conf);
+  std::cerr << "unpack" << std::endl;
+  storage_ptr s2 = storage_factory::create(
+                                           name,
+                                           method,
+                                           compressor_method,
+                                           conf);
   ASSERT_TRUE(s2 != NULL);
   {
     msgpack::unpacked unpacked;
+    std::cerr << "msgpack unpack" << std::endl;
+    std::cerr << buf.size() << std::endl;
     msgpack::unpack(&unpacked, buf.data(), buf.size());
+    //    msgpack::unpack(&unpacked, buf.data(), buf.size());
+    std::cerr << "s2->>> unpack" << std::endl;
     s2->unpack(unpacked.get());
   }
-
+  std::cerr << "get revision" << std::endl;
   EXPECT_EQ(s->get_revision(), s2->get_revision());
 
   {

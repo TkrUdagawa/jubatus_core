@@ -24,6 +24,12 @@
 
 namespace jubatus {
 namespace core {
+namespace common {
+namespace jsonconfig {
+class config;
+}  // namespace jsonconfig
+}  // namespace common
+
 namespace clustering {
 
 class storage_factory {
@@ -31,7 +37,8 @@ class storage_factory {
   static jubatus::util::lang::shared_ptr<storage> create(
       const std::string& name,
       const std::string& method,
-      const clustering_config& config);
+      const std::string& compressor_method,
+      const core::common::jsonconfig::config& config);
 };
 
 }  // namespace clustering

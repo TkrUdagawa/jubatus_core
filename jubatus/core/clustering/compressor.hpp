@@ -29,8 +29,7 @@ namespace compressor {
 
 class compressor {
  public:
-  explicit compressor(const clustering_config& cfg)
-     : config_(cfg) {}
+  explicit compressor() {}
   virtual ~compressor() {}
 
   virtual void compress(
@@ -38,10 +37,7 @@ class compressor {
       size_t bsize,
       size_t dstsize,
       wplist& dst) = 0;
-
-  MSGPACK_DEFINE(config_);
- private:
-  clustering_config config_;
+  //  MSGPACK_DEFINE();
 };
 
 }  // namespace compressor
